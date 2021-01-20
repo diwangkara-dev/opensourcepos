@@ -10,18 +10,15 @@
 		return btn_id;
 	};
 
-	var reset = function() {
-		btn_id = undefined;
-		dialog_ref = undefined;
-	}
-
 	var submit = function(button_id) {
 		return function(dlog_ref) {
-			var new_sbmt = !btn_id
+			const form = $('form', dlog_ref.$modalBody).first();
+			const validator = form.data('validator');
+			const submitted = validator && validator.formSubmitted;
 			btn_id = button_id;
 			dialog_ref = dlog_ref;
-			if (button_id == 'submit' && (new_sbmt && btn_id != "btnNew")) {
-				$('form', dlog_ref.$modalBody).first().submit();
+			if (button_id == 'submit' && (!submitted && btn_id != "btnNew")) {
+				form.submit();
 			}
 			return false;
 		}
@@ -98,7 +95,6 @@
 
 	$.extend(dialog_support, {
 		init: init,
-		reset: reset,
 		submit: submit,
 		hide: hide,
 		clicked_id: clicked_id
@@ -208,19 +204,24 @@
 		options = _options;
 		enable_actions = enable_actions(options.enableActions);
 		load_success = load_success(options.onLoadSuccess);
-		$('#table').bootstrapTable($.extend(options, {
+		$('#table')
+			.addClass("table-striped")
+			.addClass("table-bordered")
+			.bootstrapTable($.extend(options, {
 			columns: options.headers,
 			stickyHeader: true,
+			stickyHeaderOffsetLeft: $('#table').offset().right + 'px',
+			stickyHeaderOffsetRight: $('#table').offset().right + 'px',
 			url: options.resource + '/search',
 			sidePagination: 'server',
+			selectItemName: 'btSelectItem',
 			pageSize: options.pageSize,
-			striped: true,
 			pagination: true,
 			search: options.resource || false,
 			showColumns: true,
 			clickToSelect: true,
 			showExport: true,
-			exportDataType: 'all',
+			exportDataType: 'basic',
 			exportTypes: ['json', 'xml', 'csv', 'txt', 'sql', 'excel', 'pdf'],
 			exportOptions: {
 				fileName: options.resource.replace(/.*\/(.*?)$/g, '$1')
@@ -306,7 +307,6 @@
 				}
 				$.notify(message, {type: 'success' });
 			}
-			dialog_support.reset();
 			return false;
 		};
 	};

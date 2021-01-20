@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<link rel="stylesheet" type="text/css" href="css/invoice_email.css"/>
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url() . 'css/invoice_email.css';?>"/>
 </head>
 
 <body>
@@ -23,7 +23,7 @@ if(isset($error_message))
 				<?php if($this->config->item('company_logo') != '')
 				{
 				?>
-					<img id="image" src="<?php echo 'uploads/' . $this->config->item('company_logo'); ?>" alt="company_logo" />
+					<img id="image" src="data:<?=$mimetype?>;base64,<?php echo base64_encode(file_get_contents('uploads/' . $this->config->item('company_logo'))); ?>" alt="company_logo" />
 				<?php
 				}
 				?>
